@@ -42,6 +42,7 @@ let AuthService = class AuthService {
             name,
             password: hashedPassword,
         });
+        return { message: 'User created successfully', email, name };
     }
     async login(loginData) {
         const { email, password } = loginData;

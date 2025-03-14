@@ -8,7 +8,11 @@ export declare class AuthService {
     private refreshTokenModel;
     private jwtService;
     constructor(userModel: Model<User>, refreshTokenModel: Model<RefreshToken>, jwtService: JwtService);
-    signUp(signupData: SignupDto): Promise<void>;
+    signUp(signupData: SignupDto): Promise<{
+        message: string;
+        email: string;
+        name: string;
+    }>;
     login(loginData: any): Promise<{
         accessToken: string;
         refreshToken: string;

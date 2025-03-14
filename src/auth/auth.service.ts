@@ -38,6 +38,8 @@ export class AuthService {
             password: hashedPassword,
         });
 
+        return { message: 'User created successfully', email, name };
+
         //TODO: Create Login Functionality
     }
 

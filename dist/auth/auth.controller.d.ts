@@ -5,7 +5,11 @@ import { RefreshTokenDto } from './dtos/refresh-tokens.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
-    signUp(signupData: SignupDto): Promise<void>;
+    signUp(signupData: SignupDto): Promise<{
+        message: string;
+        email: string;
+        name: string;
+    }>;
     login(loginData: LoginDto): Promise<{
         accessToken: string;
         refreshToken: string;
