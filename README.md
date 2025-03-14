@@ -96,11 +96,7 @@ Before you begin, ensure you have met the following requirements:
 
 To create a Vue 3 application using Vite and integrate it with a NestJS REST API:
 
-```sh
-npm create vite@latest vue3-nestjs-app --template vue
-cd vue3-nestjs-app
-npm install
-```
+[CLONE THIS REPO: https://github.com/Tutankhamun95/easygenerator-auth-module-fe]
 
 ---
 
