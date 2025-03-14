@@ -84,6 +84,14 @@ let AuthService = class AuthService {
             expires
         });
     }
+    async logout(refreshToken) {
+        const token = await this.refreshTokenModel.findOne({ token: refreshToken });
+        if (!token) {
+            throw new common_1.NotFoundException('Refresh token not found');
+        }
+        await this.refreshTokenModel.deleteOne({ token: refreshToken });
+        return { message: 'Logged out' };
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

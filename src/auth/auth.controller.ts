@@ -7,9 +7,8 @@ import { RefreshTokenDto } from './dtos/refresh-tokens.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  //TODO: POST SIGNUP
   @Post('signup')
   async signUp(@Body() signupData: SignupDto) {
 
@@ -17,15 +16,21 @@ export class AuthController {
 
   }
 
-  //TODO: POST LOGIN
+
   @Post('login')
   async login(@Body() loginData: LoginDto) {
     return this.authService.login(loginData);
   }
 
-  //TODO: POST REFRESH TOKEN
+
   @Post('refresh')
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto.refreshToken);
+  }
+
+
+  @Post('logout')
+  async logout(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.logout(refreshTokenDto.refreshToken);
   }
 }

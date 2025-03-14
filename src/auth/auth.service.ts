@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
@@ -99,5 +99,16 @@ export class AuthService {
             userId,
             expires
         });
+    }
+
+    async removeRefreshToken(token: string) {
+        await this.refreshTokenModel.deleteOne({ token });
+    }
+
+    async logout(refreshToken: string) {
+        // await this.refreshTokenModel.deleteOne({ token: refreshToken });
+        // return { message: 'Logged out' };
+        await this.removeRefreshToken(refreshToken);
+        return { message: 'Logged out' };
     }
 }
