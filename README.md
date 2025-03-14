@@ -73,51 +73,212 @@ Before you begin, ensure you have met the following requirements:
 2. **Access the API**
    - The API will be running at `http://localhost:3000`.
 
-## Step 5: Integrating with Vue 3 Frontend
+## Step 5: 
 
-1. **Set up the Vue 3 Application**
-   - Ensure you have the Vue CLI installed:
-     ```bash
-     npm install -g @vue/cli
-     ```
+# Vue 3 Application Integrated with NestJS REST API
 
-2. **Create a new Vue 3 project**
-   ```bash
-   vue create my-vue-app
-   cd my-vue-app
-   ```
+## Table of Contents
+1. [Project Setup](#project-setup)
+2. [Folder Structure](#folder-structure)
+3. [Installing Dependencies](#installing-dependencies)
+4. [Authentication Flow](#authentication-flow)
+5. [API Service for Axios Requests](#api-service-for-axios-requests)
+6. [Vue Components & Views](#vue-components--views)
+7. [Vue Router for Navigation](#vue-router-for-navigation)
+8. [State Management with Pinia (Optional)](#state-management-with-pinia-optional)
+9. [Handling Protected Routes](#handling-protected-routes)
+10. [CORS Configuration in NestJS](#cors-configuration-in-nestjs)
+11. [Testing & Deployment](#testing--deployment)
 
-3. **Install Axios for HTTP requests**
-   ```bash
-   npm install axios
-   ```
+---
 
-4. **Configure Axios to connect to the NestJS API**
-   - In your Vue app, set up Axios to point to `http://localhost:3000`.
+## 1. Project Setup
 
-5. **Run the Vue Application**
-   ```bash
-   npm run serve
-   ```
+To create a Vue 3 application using Vite and integrate it with a NestJS REST API:
 
-6. **Access the Frontend**
-   - The Vue app will be running at `http://localhost:8080`.
-
-## Additional Resources
-
-- [NestJS Documentation](https://docs.nestjs.com)
-- [Vue 3 Documentation](https://v3.vuejs.org/guide/introduction.html)
-
-## Support
-
-For any issues or questions, please reach out via [Discord](https://discord.gg/G7Qnnhy) or check the [NestJS Documentation](https://docs.nestjs.com).
-
-## License
-
-This project is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-
-## Project setup
-
-```bash
-$ npm install
+```sh
+npm create vite@latest vue3-nestjs-app --template vue
+cd vue3-nestjs-app
+npm install
 ```
+
+---
+
+## 2. Folder Structure
+
+```
+vue3-nestjs-app/
+│── src/
+│   │── components/
+│   │── views/
+│   │── router/
+│   │── store/
+│   │── services/
+│   │── App.vue
+│   │── main.ts
+│── public/
+│── package.json
+│── vite.config.ts
+```
+
+---
+
+## 3. Installing Dependencies
+
+```sh
+npm install axios vue-router pinia
+```
+
+---
+
+## 4. Authentication Flow
+
+1. User **signs up** (`POST /signup`)
+2. User **logs in**, receives a JWT (`POST /login`)
+3. Token is **stored in localStorage**
+4. User accesses **protected route** (`GET /protected`)
+5. If token expires, a **refresh token** is used (`POST /refresh`)
+6. If refresh fails, user is **logged out**
+
+---
+
+## 5. API Service for Axios Requests
+
+```ts
+import axios from 'axios';
+
+const API_URL = 'http://localhost:3000';
+
+export const api = axios.create({
+  baseURL: API_URL,
+});
+
+const setAuthToken = (token: string) => {
+  localStorage.setItem('accessToken', token);
+  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+};
+
+export const login = async (data: { email: string; password: string }) => {
+  const response = await api.post('/main/login', data);
+  setAuthToken(response.data.accessToken);
+  return response.data;
+};
+```
+
+---
+
+## 6. Vue Components & Views
+
+- **LoginView.vue**: Handles user login
+- **SignupView.vue**: Handles user signup
+- **DashboardView.vue**: Displays protected content
+
+---
+
+## 7. Vue Router for Navigation
+
+```ts
+import { createRouter, createWebHistory } from 'vue-router';
+import LoginView from '@/views/LoginView.vue';
+import SignupView from '@/views/SignupView.vue';
+import DashboardView from '@/views/DashboardView.vue';
+
+const routes = [
+  { path: '/login', component: LoginView },
+  { path: '/signup', component: SignupView },
+  { path: '/dashboard', component: DashboardView },
+];
+
+export default createRouter({
+  history: createWebHistory(),
+  routes,
+});
+```
+
+---
+
+## 8. State Management with Pinia (Optional)
+
+Install Pinia:
+
+```sh
+npm install pinia
+```
+
+Create a store:
+
+```ts
+import { defineStore } from 'pinia';
+
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    user: null,
+  }),
+  actions: {
+    setUser(user: any) {
+      this.user = user;
+    },
+  },
+});
+```
+
+---
+
+## 9. Handling Protected Routes
+
+```ts
+const isAuthenticated = () => !!localStorage.getItem('accessToken');
+
+beforeEnter: (to, from, next) => {
+  if (!isAuthenticated()) {
+    next('/login');
+  } else {
+    next();
+  }
+}
+```
+
+---
+
+## 10. CORS Configuration in NestJS
+
+Modify `main.ts` in the NestJS project:
+
+```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+---
+
+## 11. Testing & Deployment
+
+### Run Vue App
+```sh
+npm run dev
+```
+
+### Run NestJS API
+```sh
+npm run start
+```
+
+### Deployment
+- **Frontend**: Deploy on Vercel, Netlify, or AWS S3
+- **Backend**: Deploy on AWS EC2, DigitalOcean, or Render
+
+---
+
+This guide provides a full walkthrough for integrating Vue 3 with NestJS. 🚀
+
