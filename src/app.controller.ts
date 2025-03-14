@@ -7,7 +7,7 @@ import { AuthGuard } from './guards/auth.guard';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('omak')
+  @Get('hello')
   someProtectedRoute(@Req() req) {
     return { message: 'This is a protected route', user: req.user };
   }
